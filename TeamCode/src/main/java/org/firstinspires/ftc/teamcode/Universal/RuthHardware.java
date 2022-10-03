@@ -64,8 +64,6 @@ public class RuthHardware {
     ElapsedTime scoreTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
 
-
-
     public RuthHardware (LinearOpMode opmode) {
         myOpMode = opmode;
     }
