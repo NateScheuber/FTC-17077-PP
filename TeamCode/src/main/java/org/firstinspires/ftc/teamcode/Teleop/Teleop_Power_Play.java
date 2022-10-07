@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -44,19 +43,17 @@ public class Teleop_Power_Play extends LinearOpMode {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             driveX = gamepad1.right_stick_x;
             driveY = -gamepad1.right_stick_y;
-            driveR = gamepad1.left_stick_x;
+            driveR = gamepad1.left_stick_x+(gamepad1.right_trigger*0.25)-(gamepad1.left_trigger*0.25);
             heading = angles.firstAngle;
 
 
             //dt control
             Ruth.driveRobotOriented(driveX, driveY, driveR);
+            Ruth.driveSlowMo(gamepad1.dpad_up, gamepad1.dpad_down, gamepad1.dpad_right, gamepad1.dpad_left);
 
             //intake control
-            if(gamepad1.right_bumper && Ruth.intakeSensor()){
-                Ruth.intake("in");
-            }
-            else if(gamepad1.left_bumper){
-                Ruth.intake("out");
+            if(gamepad1.right_bumper || gamepad1.left_bumper) {
+                Ruth.pickUp(gamepad1.right_bumper, gamepad1.left_bumper);
             }
 
 
@@ -78,13 +75,6 @@ public class Teleop_Power_Play extends LinearOpMode {
             if(gamepad2.cross){
                 Ruth.score();
             }
-
-
-
-
-
-            Ruth.lift("intakeDown");
-
         }
     }
 }

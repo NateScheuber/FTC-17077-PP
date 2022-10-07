@@ -62,6 +62,7 @@ public class RuthHardware {
 
 
     ElapsedTime scoreTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    ElapsedTime intakeTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
 
     public RuthHardware (LinearOpMode opmode) {
@@ -119,6 +120,22 @@ public class RuthHardware {
         backLeft.setPower(Y+X+R);
     }
 
+    public void driveSlowMo(boolean forward, boolean backward, boolean right, boolean left){
+        if(forward){
+            driveRobotOriented(0.25, 0, 0);
+        }
+        else if(backward){
+            driveRobotOriented(-0.25,0,0);
+        }
+
+        if(right){
+            driveRobotOriented(0, 0.25, 0);
+        }
+        else if(left){
+            driveRobotOriented(0, -0.25, 0);
+        }
+    }
+
     public void arm(String position){
 
         currentArmPosition = armPosition.valueOf(position);
@@ -153,10 +170,33 @@ public class RuthHardware {
         return (sensorRight.getDistance(DistanceUnit.MM) < 10 & sensorLeft.getDistance(DistanceUnit.MM) < 10);
     }
 
-    public void intake(String in_out){
-        intakeLeft.setPower(0);
-        intakeRight.setPower(0);
+    public void intake(double speed){
+        intakeLeft.setPower(speed);
+        intakeRight.setPower(speed);
     }
+
+    public void pickUp(boolean rightBumper, boolean leftBumper){
+        intakeTimer.reset();
+        if(rightBumper && intakeSensor()){
+            arm("intakeDown");
+            intake(1);
+            if(intakeTimer.time()>250){
+                arm("safe");
+                intake(0);
+            }
+        }
+        else if(leftBumper){
+            arm("intakeDown");
+            if(intakeTimer.time()>250){
+                intake(-1);
+            }
+            else if(intakeTimer.time()>500){
+                arm("safe");
+                intake(0);
+            }
+        }
+    }
+
 
     public void lift(String height) {
 
@@ -166,7 +206,6 @@ public class RuthHardware {
                 case home:
                     liftMaster.setTargetPosition(0);
                     liftSlave.setTargetPosition(liftMaster.getTargetPosition());
-
                     break;
 
                 case low:
@@ -186,13 +225,12 @@ public class RuthHardware {
             }
 
 
-
-
         liftMaster.setPower(liftSpeed);
         liftSlave.setPower(liftSpeed);
         telemetry.addData("lift Position", liftMaster.getCurrentPosition());
         telemetry.update();
     }
+
     public void score(){
         scoreTimer.reset();
         if(scoreTimer.time()<300){
@@ -207,12 +245,5 @@ public class RuthHardware {
         else if(scoreTimer.time()<600){
             lift("intakeUp");
         }
-
-
-
-        lift("home");
     }
-
-
-
 }
