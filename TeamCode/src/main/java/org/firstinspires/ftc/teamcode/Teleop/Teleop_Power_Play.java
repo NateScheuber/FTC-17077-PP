@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -29,6 +31,7 @@ public class Teleop_Power_Play extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         Ruth.init();
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -73,6 +76,9 @@ public class Teleop_Power_Play extends LinearOpMode {
 
             //score
             if(gamepad2.cross){
+                Ruth.arm("score");
+            }
+            else if(gamepad2.triangle){
                 Ruth.score();
             }
         }

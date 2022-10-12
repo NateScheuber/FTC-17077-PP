@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Universal;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -18,13 +20,14 @@ import java.util.List;
 
 public class RuthHardware {
 
+
     private static double intakeArmP = 1;
     private static double armSpeed = 0.5;
     private static int armPositionTolerance = 20;
 
     private static double liftP = 1;
     private static double liftSpeed = 0.75;
-    private static double liftPositionTolerance = 20;
+    private static int liftPositionTolerance = 20;
 
     public enum liftPosition{
         home,
@@ -70,6 +73,7 @@ public class RuthHardware {
     }
 
     public void init(){
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         List<LynxModule> allHubs = myOpMode.hardwareMap.getAll(LynxModule.class);
         for(LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
@@ -105,12 +109,10 @@ public class RuthHardware {
         liftSlave.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMaster.setPositionPIDFCoefficients(liftP);
         liftSlave.setPositionPIDFCoefficients(liftP);
+        liftMaster.setTargetPositionTolerance(liftPositionTolerance);
+        liftMaster.setTargetPositionTolerance(liftPositionTolerance);
 
         scoreTimer.reset();
-    }
-
-    public void driveFieldOriented(double X, double Y, double R, double heading){
-
     }
 
     public void driveRobotOriented(double X, double Y, double R){
@@ -118,6 +120,14 @@ public class RuthHardware {
         backRight.setPower(Y+X-R);
         frontLeft.setPower(Y-X+R);
         backLeft.setPower(Y+X+R);
+    }
+
+    public void driveFieldOriented(double X, double Y, double R, double heading){
+        double h = Math.sqrt(X*X+Y*Y);
+        double angle = Math.atan2(X,Y)-(heading/522);
+        double xPower = (h*Math.sin(angle));
+        double yPower = (h*Math.cos(angle));
+        driveRobotOriented(xPower, yPower, R);
     }
 
     public void driveSlowMo(boolean forward, boolean backward, boolean right, boolean left){
@@ -224,7 +234,6 @@ public class RuthHardware {
                     break;
             }
 
-
         liftMaster.setPower(liftSpeed);
         liftSlave.setPower(liftSpeed);
         telemetry.addData("lift Position", liftMaster.getCurrentPosition());
@@ -240,10 +249,10 @@ public class RuthHardware {
         else if(scoreTimer.time()<500){
             intakeLeft.setPower(0);
             intakeRight.setPower(0);
-            arm("front");
+            arm("safe");
         }
         else if(scoreTimer.time()<600){
-            lift("intakeUp");
+            lift("home");
         }
     }
 }
