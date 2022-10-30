@@ -14,7 +14,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Auto.VIsion.Signal_Pipeline;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.List;
 
@@ -254,5 +259,15 @@ public class RuthHardware {
         else if(scoreTimer.time()<600){
             lift("home");
         }
+    }
+
+    public void initCamera(){
+        int cameraMonitorViewId = myOpMode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", myOpMode.hardwareMap.appContext.getPackageName());
+        WebcamName webcamName = myOpMode.hardwareMap.get(WebcamName.class, "webcam");
+        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        camera.openCameraDevice();
+        camera.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
+        camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+        camera.setPipeline(new Signal_Pipeline());
     }
 }
