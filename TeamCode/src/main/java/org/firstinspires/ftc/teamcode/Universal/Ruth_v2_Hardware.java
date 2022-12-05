@@ -17,28 +17,31 @@ import java.util.List;
 public class Ruth_v2_Hardware {
     private LinearOpMode myOpMode = null;
 
+
+
     public static double intakeArmP = 3.5;
-    public static double armSpeed = 0.5;
+    public static double armSpeed = 0.25;
     public static int armPositionTolerance = 10;
 
     boolean clawToggle = true;
     boolean clawPosition = false;
     boolean isclawFlipped = false;
 
-    public static double clawOpen = 0.0;
-    public static double clawClosed = 0.2;
+    public static double clawOpen = 0.2;
+    public static double clawClosed = 0.0;
     public static double clawRotateUR = 0.1;
-    public static double clawRotateUD = 0.8;
-    public static double clawLevel = 0.24;
+    public static double clawRotateUD = 0.75;
+    public static double clawLevel = 0.225;
     public static double clawFlipped = 0.0;
+    public static double clawLowLevel = 0.36;
 
     public static double liftP = 4;
     public static double liftSpeed = 0.8;
     public static int liftPositionTolerance = 5;
 
-    public static int level1 = -700;
-    public static int level2 = -1050;
-    public static int level3 = -1400;
+    public static int level1 = -0;
+    public static int level2 = -360;
+    public static int level3 = -1100;
     public static int liftLevel = 0;
 
     public enum liftPosition{
@@ -108,10 +111,11 @@ public class Ruth_v2_Hardware {
         frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
         backLeft.setDirection(DcMotorEx.Direction.REVERSE);
 
-        intakeArm.setTargetPosition(50);
+        intakeArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeArm.setTargetPosition(0);
         intakeArm.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         intakeArm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        intakeArm.setPositionPIDFCoefficients(intakeArmP);
+        //intakeArm.setPositionPIDFCoefficients(intakeArmP);
         intakeArm.setTargetPositionTolerance(armPositionTolerance);
         intakeArm.setPower(1);
 
@@ -119,12 +123,12 @@ public class Ruth_v2_Hardware {
         liftSlave.setTargetPosition(0);
         liftMaster.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftSlave.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftMaster.setPositionPIDFCoefficients(liftP);
-        liftSlave.setPositionPIDFCoefficients(liftP);
+        //liftMaster.setPositionPIDFCoefficients(liftP);
+        //liftSlave.setPositionPIDFCoefficients(liftP);
         liftMaster.setTargetPositionTolerance(liftPositionTolerance);
         liftMaster.setTargetPositionTolerance(liftPositionTolerance);
 
-        claw.setPosition(clawOpen);
+        claw.setPosition(0.4);
         clawRotate.setPosition(clawRotateUR);
         clawFlip.setPosition(clawLevel);
 
@@ -161,25 +165,25 @@ public class Ruth_v2_Hardware {
     }
 
 
-    public void arm(String position){
+    public void arm(String position, int offset){
 
         currentArmPosition = Ruth_v2_Hardware.armPosition.valueOf(position);
 
         switch(currentArmPosition){
             case home:
-                intakeArm.setTargetPosition(50);
+                intakeArm.setTargetPosition(0-offset);
                 break;
 
             case back:
-                intakeArm.setTargetPosition(100);
+                intakeArm.setTargetPosition(600-offset);
                 break;
 
             case up:
-                intakeArm.setTargetPosition(-180);
+                intakeArm.setTargetPosition(325-offset);
                 break;
 
             case low:
-                intakeArm.setTargetPosition(-300);
+                intakeArm.setTargetPosition(-350-offset);
                 break;
         }
         intakeArm.setPower(armSpeed);
@@ -193,30 +197,11 @@ public class Ruth_v2_Hardware {
     public boolean armBusy(){return intakeArm.isBusy();}
 
     //claw open/closed
-    public void claw(boolean button){
-        if(button){
-            clawPosition = !clawPosition;
-        }
-
-        if(clawPosition){
-            claw.setPosition(clawOpen);
-        }
-        else{
-            claw.setPosition(clawClosed);
-        }
-
+    public void claw(double position){
+        claw.setPosition(position);
     }
-    public void clawFlip(boolean button){
-        if(button){
-            isclawFlipped = !isclawFlipped;
-        }
-
-        if(isclawFlipped && clawPosition){
-            clawFlip.setPosition(clawFlipped);
-        }
-        else{
-            clawFlip.setPosition(clawLevel);
-        }
+    public void clawFlip(double position){
+        clawFlip.setPosition(position);
     }
 
 
@@ -268,16 +253,16 @@ public class Ruth_v2_Hardware {
     public boolean liftBusy(){return liftMaster.isBusy();}
 
     public void clawProtection(){
-        if(liftBusy()){
+        if(liftBusy() || armBusy()){
             claw.setPosition(clawClosed);
         }
     }
 
     public void clawRotate(){
-        if(armCurrentPosition()>200){
+        if(liftCurrentPosition()<-200){
             clawRotate.setPosition(clawRotateUD);
         }
-        else if(armCurrentPosition()<200){
+        else if(liftCurrentPosition()>-200){
             clawRotate.setPosition(clawRotateUR);
         }
     }

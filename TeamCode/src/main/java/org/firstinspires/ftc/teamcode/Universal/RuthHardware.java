@@ -27,6 +27,7 @@ import java.util.List;
 public class RuthHardware {
 
 
+
     private static double intakeArmP = 2.5;
     private static double armSpeed = 0.5;
     private static int armPositionTolerance = 10;
