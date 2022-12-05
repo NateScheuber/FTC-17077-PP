@@ -51,25 +51,25 @@ public class Ruth_v2_Teleop extends LinearOpMode {
 
             if(gamepad2.dpad_down){
                 Ruth.lift("home");
-                Ruth.arm("home", armOffset);
+                Ruth.arm("home");
                 Ruth.clawFlip(0.24);
                 liftPosition = 0;
             }
             else if(gamepad2.dpad_left){
                 Ruth.lift("home");
-                Ruth.arm("up", armOffset);
+                Ruth.arm("up");
                 Ruth.clawFlip(0.36);
                 liftPosition = 1;
             }
             else if(gamepad2.dpad_up){
                 Ruth.lift("medium");
-                Ruth.arm("back", armOffset);
+                Ruth.arm("back");
                 Ruth.clawFlip(0.2);
                 liftPosition = 2;
             }
             else if(gamepad2.dpad_right){
                 Ruth.lift("high");
-                Ruth.arm("back", armOffset);
+                Ruth.arm("back");
                 Ruth.clawFlip(0.2);
                 liftPosition = 3;
             }
@@ -118,12 +118,12 @@ public class Ruth_v2_Teleop extends LinearOpMode {
                 armOffset -= 1;
             }
 
-
             //full reset
             if(gamepad2.triangle){
                 Ruth.lift("home");
-                Ruth.arm("home", armOffset);
+                Ruth.arm("home");
                 Ruth.claw(0.0);
+                Ruth.clawFlip(0.24);
             }
 
             telemetry.addData("Lift Position", Ruth.liftCurrentPosition());

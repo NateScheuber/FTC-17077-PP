@@ -165,25 +165,25 @@ public class Ruth_v2_Hardware {
     }
 
 
-    public void arm(String position, int offset){
+    public void arm(String position){
 
         currentArmPosition = Ruth_v2_Hardware.armPosition.valueOf(position);
 
         switch(currentArmPosition){
             case home:
-                intakeArm.setTargetPosition(0-offset);
+                intakeArm.setTargetPosition(0);
                 break;
 
             case back:
-                intakeArm.setTargetPosition(600-offset);
+                intakeArm.setTargetPosition(600);
                 break;
 
             case up:
-                intakeArm.setTargetPosition(325-offset);
+                intakeArm.setTargetPosition(325);
                 break;
 
             case low:
-                intakeArm.setTargetPosition(-350-offset);
+                intakeArm.setTargetPosition(-350);
                 break;
         }
         intakeArm.setPower(armSpeed);
