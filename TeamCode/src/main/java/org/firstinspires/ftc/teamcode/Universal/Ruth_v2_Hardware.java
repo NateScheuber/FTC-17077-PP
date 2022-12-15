@@ -41,7 +41,7 @@ public class Ruth_v2_Hardware {
 
     public static int level1 = -0;
     public static int level2 = -360;
-    public static int level3 = -1100;
+    public static int level3 = -1150;
     public static int liftLevel = 0;
 
     public enum liftPosition{
@@ -256,6 +256,9 @@ public class Ruth_v2_Hardware {
         if(liftBusy() || armBusy()){
             claw.setPosition(clawClosed);
         }
+    }
+    public void clawRotatePosition(double position){
+        clawRotate.setPosition(position);
     }
 
     public void clawRotate(){
