@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -31,6 +32,8 @@ public class Ruth_v2_Teleop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Ruth.init();
+        RevColorSensorV3 detectionRight = hardwareMap.get(RevColorSensorV3.class, "detectionRight");
+        RevColorSensorV3 detectionLeft = hardwareMap.get(RevColorSensorV3.class, "detectionLeft");
 
 
         waitForStart();
@@ -131,6 +134,8 @@ public class Ruth_v2_Teleop extends LinearOpMode {
             telemetry.addData("Arm Position", Ruth.armCurrentPosition());
             telemetry.addData("Claw Closed?", clawClosed);
             telemetry.addData("Claw Flipped?", clawFlipped);
+            telemetry.addData("Right Hue", detectionRight.green());
+            telemetry.addData("Left Hue", detectionLeft.green());
             telemetry.update();
 
         }
